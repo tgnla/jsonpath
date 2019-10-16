@@ -922,6 +922,21 @@ class TestJsonpath < MiniTest::Unit::TestCase
     assert_equal(['should_still_work'], hs.on(j))
   end
 
+  def test_object_field_with_dot
+    data = {
+      'resources' => [
+        { 'name' => 'igloo-1',
+          'type' => 'Types.igloos', 'foo' => { 'bar' => 'baz'} },
+        { 'name' => 'igloo-2',
+          'type' => 'Types.igloos' },
+        { 'name' => 'brick-house-1',
+          'type' => 'Types.brickHouses' }
+      ]
+    }
+    jp = JsonPath.new("$.resources[*][?(@['type'] == 'Types.igloos')].name")
+    assert_equal(%w[igloo-1 igloo-2], jp.on(data))
+  end
+
   def example_object
     { 'store' => {
       'book' => [
